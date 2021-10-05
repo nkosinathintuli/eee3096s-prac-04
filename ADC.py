@@ -11,7 +11,7 @@ import RPi.GPIO as GPIO
 
 
 # toggle button
-toggle_btn = 16
+toggle_btn = 23 
 # sampling rates
 samp_rates = [1, 5, 10]
 # create the spi bus
@@ -29,11 +29,15 @@ temp_ADC = -1
 temp_v_out = -1
 LDR_ADC = -1
 
+# op vars
+runtime = 0
+pos = 0
+start = time.time()
 
 # Setup pins
 def setup():
   # Setup board mode
-  GPIO.setmode(GPIO.BOARD)
+  # GPIO.setmode(GPIO.BOARD) #already set as BCM probably by the adafruit lib
 
   GPIO.setup(toggle_btn, GPIO.IN, pull_up_down=GPIO.PUD_UP)
   # Setup debouncing and callbacks
@@ -41,9 +45,10 @@ def setup():
   pass
 
 # toggle sampling rate
-def toggle():
+def toggle(channel):
   # cycle thru the list of sampling rates in asc order
-
+  global pos
+  pos = (pos+1) if pos<2 else 0
   pass
 
 # temparature conversion
@@ -58,14 +63,15 @@ def to_temp(voltage):
 
 # print sensor readings
 def print_readings():
-
-  thread = threading.Timer(5.0, print_readings)
+  global runtime
+  global start
+  thread = threading.Timer(samp_rates[pos], print_readings)
   thread.daemon = True  # Daemon threads exit when the program does
   thread.start()
   read_sensors()
-  #print(datetime.datetime.now())
-  #print("Runtime Temp Reading Temp Light Reading")
-  print(str(temp_ADC)+"   "+str(to_temp(temp_v_out))+"   "+str(LDR_ADC))
+  runtime=+(time.time()-start)
+  print(f"{int(runtime):<7.0f}   {temp_ADC:<12.0f}   {to_temp(temp_v_out):<.2f} C   {LDR_ADC:<13.0f}")
+  #sruntime=+(time.time()-start)
 
 def read_sensors():
   # read from sensors
@@ -79,8 +85,10 @@ def read_sensors():
 
 
 if __name__ == "__main__":
+  print("Runtime   Temp Reading   Temp      Light Reading")
+  #print("012345678901234567890123456789012345678901234567")
+  setup()
   try:
-    # this
     print_readings() # call it once to start the thread
 
     # Tell our program to run indefinitely

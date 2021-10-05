@@ -37,8 +37,7 @@ start = time.time()
 # Setup pins
 def setup():
   # Setup board mode
-  # GPIO.setmode(GPIO.BOARD) #already set as BCM probably by the adafruit lib
-
+  # GPIO.setmode(GPIO.BOARD) # already set as BCM probably by the adafruit lib
   GPIO.setup(toggle_btn, GPIO.IN, pull_up_down=GPIO.PUD_UP)
   # Setup debouncing and callbacks
   GPIO.add_event_detect(toggle_btn,GPIO.FALLING,callback=toggle,bouncetime=200)
@@ -54,7 +53,6 @@ def toggle(channel):
 # temparature conversion
 def to_temp(voltage):
   # Vout = Tc*Ta + V0c (SENSOR TRANSFER FUNCTION)
-  # Vout = chan1.voltage
   # Sensor: MCP9700
   v_0c = 0.5 # Sensor Output Voltage at 0 degree C
   t_c = 0.01 # Temperature Coefficient
@@ -71,10 +69,9 @@ def print_readings():
   read_sensors()
   runtime=+(time.time()-start)
   print(f"{int(runtime):<7.0f}   {temp_ADC:<12.0f}   {to_temp(temp_v_out):<.2f} C   {LDR_ADC:<13.0f}")
-  #sruntime=+(time.time()-start)
 
+# read from sensors
 def read_sensors():
-  # read from sensors
   global temp_ADC
   global temp_v_out
   global LDR_ADC
@@ -85,12 +82,10 @@ def read_sensors():
 
 
 if __name__ == "__main__":
-  print("Runtime   Temp Reading   Temp      Light Reading")
-  #print("012345678901234567890123456789012345678901234567")
   setup()
+  print("Runtime   Temp Reading   Temp      Light Reading")
   try:
     print_readings() # call it once to start the thread
-
     # Tell our program to run indefinitely
     while True:
       pass

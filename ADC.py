@@ -11,7 +11,7 @@ import RPi.GPIO as GPIO
 
 
 # toggle button
-toggle_btn = 23 
+toggle_btn = 23 # mode set to BCM
 # sampling rates
 samp_rates = [1, 5, 10]
 # create the spi bus
@@ -68,7 +68,7 @@ def print_readings():
   thread.start()
   read_sensors()
   runtime=+(time.time()-start)
-  print(f"{int(runtime):<7.0f}   {temp_ADC:<12.0f}   {to_temp(temp_v_out):<.2f} C   {LDR_ADC:<13.0f}")
+  print(f"{str(int(runtime))+'s':<7s}   {temp_ADC:<12.0f}   {to_temp(temp_v_out):<.2f} C   {LDR_ADC:<13.0f}")
 
 # read from sensors
 def read_sensors():
@@ -82,9 +82,9 @@ def read_sensors():
 
 
 if __name__ == "__main__":
-  setup()
-  print("Runtime   Temp Reading   Temp      Light Reading")
   try:
+    setup()
+    print("Runtime   Temp Reading   Temp      Light Reading")
     print_readings() # call it once to start the thread
     # Tell our program to run indefinitely
     while True:
@@ -92,4 +92,5 @@ if __name__ == "__main__":
   except Exception as e:
     print(e)
   finally:
+    GPIO.cleanup()
     print("Good Bye!")
